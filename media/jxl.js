@@ -5,13 +5,16 @@
 	// @ts-ignore
 	const vscode = acquireVsCodeApi();
 
+	function log(/** @type string */ message) {
+		vscode.postMessage({ type: 'log', body: message });
+	}
+
 	/**
 	 * @param {Uint8Array} initialContent
 	 * @return {Promise<HTMLImageElement>}
 	 */
 	async function loadImageFromData(initialContent) {
 		const blob = new Blob([initialContent], { 'type': 'image/png' });
-        // vscode.postMessage({ type: 'log', body: 'received content size: ' + initialContent.length });
 		const url = URL.createObjectURL(blob);
 		try {
 			const img = document.createElement('img');
@@ -60,9 +63,17 @@
 				this.canvas.style.display = 'unset';
 				this.errorText.style.display = 'none';
 				const img = await loadImageFromData(image.png);
-                this.canvas.width = img.naturalWidth;
-                this.canvas.height = img.naturalHeight;
+				this.canvas.width = img.naturalWidth;
+				this.canvas.height = img.naturalHeight;
 				this.ctx.drawImage(img, 0, 0);
+
+				// this.intervalId = setInterval(() => {
+				// 	if (!this.canvas) {
+				// 		return;
+				// 	}
+				// 	log('scaling factor w: ' + this.canvas.offsetWidth / this.canvas.width * 100);
+				// 	log('scaling factor h: ' + this.canvas.offsetHeight / this.canvas.height * 100);
+				// }, 1000);
 			} else {
 				this.canvas.style.display = 'none';
 				this.errorText.style.display = 'unset';
@@ -71,11 +82,11 @@
 		}
 	}
 
-    /** @type HTMLElement | null */
-    const canvasDiv = document.querySelector('.canvas');
-    if (!canvasDiv) {
-        throw new Error('could not query .canvas div');
-    }
+	/** @type HTMLElement | null */
+	const canvasDiv = document.querySelector('.canvas');
+	if (!canvasDiv) {
+		throw new Error('could not query .canvas div');
+	}
 	const editor = new JXLEditor(canvasDiv);
 
 	// Handle messages from the extension

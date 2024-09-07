@@ -1,5 +1,6 @@
 html, body {
 	height: 100%;
+	padding: 0;
 }
 
 .canvas {
@@ -11,6 +12,12 @@ html, body {
 	align-items: center;
 	background-repeat: repeat;
 	flex-direction: column;
+	margin: 0;
+}
+
+canvas {
+	max-width: 95vw;
+	max-height: 95vh;
 }
 
 .error-message {
