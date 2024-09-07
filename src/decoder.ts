@@ -16,19 +16,27 @@ export async function decode(data: Uint8Array): Promise<DecodedImage> {
 			resolutionY: 0,
 		};
 	}
-	await init(module);
-	const image = new JxlImage();
-	image.feedBytes(data);
-	if (!image.tryInit()) {
+	try {
+		await init(module);
+		const image = new JxlImage();
+		image.feedBytes(data);
+		if (!image.tryInit()) {
+			return {
+				error: 'Malformed data',
+				resolutionX: 0,
+				resolutionY: 0,
+			};
+		}
+		const renderResult = image.render();
+		const png = renderResult.encodeToPng();
+		const resolutionX = png[16] << 24 | png[17] << 16 | png[18] << 8 | png[19];
+		const resolutionY = png[20] << 24 | png[21] << 16 | png[22] << 8 | png[23];
+		return { png, resolutionX, resolutionY };
+	} catch (e) {
 		return {
-			error: 'Malformed data',
+			error: e instanceof Error ? e.message : `${e}`,
 			resolutionX: 0,
 			resolutionY: 0,
 		};
 	}
-	const renderResult = image.render();
-	const png = renderResult.encodeToPng();
-	const resolutionX = png[16] << 24 | png[17] << 16 | png[18] << 8 | png[19];
-	const resolutionY = png[20] << 24 | png[21] << 16 | png[22] << 8 | png[23];
-	return { png, resolutionX, resolutionY };
 }

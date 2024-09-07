@@ -29,7 +29,12 @@ class JXLDocument extends Disposable implements vscode.CustomDocument {
 
 	private readonly _decoded: DecodedImage;
 
-	public get resolutionString() { return `${this._decoded.resolutionX}x${this._decoded.resolutionY}`; }
+	public get resolutionString() {
+		if (!this._decoded.png) {
+			return '';
+		}
+		return `${this._decoded.resolutionX}x${this._decoded.resolutionY}`;
+	}
 
 	private constructor(
 		uri: vscode.Uri,
@@ -142,8 +147,12 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 			}
 			this.fileSizeStatusBarItem.tooltip = `${document.documentData.length.toLocaleString()} Bytes${bpp}`;
 			this.fileSizeStatusBarItem.show();
-			this.resolutionStatusBarItem.text = document.resolutionString;
-			this.resolutionStatusBarItem.show();
+			if (document.resolutionString) {
+				this.resolutionStatusBarItem.text = document.resolutionString;
+				this.resolutionStatusBarItem.show();
+			} else {
+				this.resolutionStatusBarItem.hide();
+			}
 		} else {
 			this.fileSizeStatusBarItem.hide();
 			this.resolutionStatusBarItem.hide();

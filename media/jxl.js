@@ -44,7 +44,7 @@
 			this.canvas.style.display = 'unset';
 			this.ctx = this.canvas.getContext('2d');
 
-			this.errorText = document.createElement('h1');
+			this.errorText = document.createElement('h2');
 			this.errorText.id = 'error-message';
 			this.errorText.style.display = 'none';
 

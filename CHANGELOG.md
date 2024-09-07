@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.6 (2024-09-07)
+
+- Show bits per pixel in status bar tooltip
+- Hide image resolution for images that fail to decode
+- Improve error messages when images fail to decode
+- Don't show decimal places for files smaller than 1024 bytes
+
 ## v1.0.5 (2024-09-07)
 
 - Remove status bar entries when webview is disposed
