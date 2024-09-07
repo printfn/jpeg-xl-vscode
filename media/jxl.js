@@ -11,7 +11,7 @@
 	 */
 	async function loadImageFromData(initialContent) {
 		const blob = new Blob([initialContent], { 'type': 'image/png' });
-        vscode.postMessage({ type: 'log', body: 'received content size: ' + initialContent.length });
+        // vscode.postMessage({ type: 'log', body: 'received content size: ' + initialContent.length });
 		const url = URL.createObjectURL(blob);
 		try {
 			const img = document.createElement('img');
@@ -29,15 +29,7 @@
 
 	class JXLEditor {
 		constructor( /** @type {HTMLElement} */ parent) {
-			this.ready = false;
-
-			this.editable = false;
-
 			this._initElements(parent);
-		}
-
-		setEditable(editable) {
-			this.editable = editable;
 		}
 
 		_initElements(/** @type {HTMLElement} */ parent) {
@@ -45,64 +37,37 @@
 			this.wrapper.style.position = 'relative';
 			parent.append(this.wrapper);
 
-			this.initialCanvas = document.createElement('canvas');
-			this.initialCtx = this.initialCanvas.getContext('2d');
-			this.wrapper.append(this.initialCanvas);
+			this.canvas = document.createElement('canvas');
+			this.canvas.style.display = 'unset';
+			this.ctx = this.canvas.getContext('2d');
+
+			this.errorText = document.createElement('h1');
+			this.errorText.id = 'error-message';
+			this.errorText.style.display = 'none';
+
+			this.wrapper.append(this.errorText);
+			this.wrapper.append(this.canvas);
 		}
 
 		/**
-		 * @param {Uint8Array | undefined} data
+		 * @param {import('../src/decoder').DecodedImage} image
 		 */
-		async reset(data) {
-			if (data) {
-				const img = await loadImageFromData(data);
-                if (!this.initialCanvas || !this.initialCtx) {
-                    return;
-                }
-                this.initialCanvas.width = img.naturalWidth;
-                this.initialCanvas.height = img.naturalHeight;
-				this.initialCtx.drawImage(img, 0, 0);
-				this.ready = true;
+		async reset(image) {
+			if (!this.canvas || !this.ctx || !this.errorText) {
+				return;
 			}
-		}
-
-		async resetUntitled() {
-			const size = 100;
-            if (!this.initialCanvas || !this.initialCtx) {
-                return;
-            }
-			this.initialCanvas.width = size;
-			this.initialCanvas.height = size;
-
-			this.initialCtx.save();
-			{
-				this.initialCtx.fillStyle = 'white';
-				this.initialCtx.fillRect(0, 0, size, size);
+			if (image.png) {
+				this.canvas.style.display = 'unset';
+				this.errorText.style.display = 'none';
+				const img = await loadImageFromData(image.png);
+                this.canvas.width = img.naturalWidth;
+                this.canvas.height = img.naturalHeight;
+				this.ctx.drawImage(img, 0, 0);
+			} else {
+				this.canvas.style.display = 'none';
+				this.errorText.style.display = 'unset';
+				this.errorText.innerHTML = `JPEG XL: ${image.error ?? 'Unknown error'}`;
 			}
-			this.initialCtx.restore();
-			this.ready = true;
-		}
-
-		/** @return {Promise<Uint8Array>} */
-		async getImageData() {
-			const outCanvas = document.createElement('canvas');
-            if (!this.initialCanvas || !this.initialCtx) {
-                throw new Error('cannot get image data: no canvas/context');
-            }
-			outCanvas.width = this.initialCanvas.width;
-			outCanvas.height = this.initialCanvas.height;
-
-			const outCtx = outCanvas.getContext('2d');
-            if (!outCtx) {
-                throw new Error('could not initialise outCtx');
-            }
-			outCtx.drawImage(this.initialCanvas, 0, 0);
-
-			const blob = await new Promise(resolve => {
-				outCanvas.toBlob(resolve, 'image/png');
-			});
-
-			return new Uint8Array(await blob.arrayBuffer());
 		}
 	}
 
@@ -115,31 +80,11 @@
 
 	// Handle messages from the extension
 	window.addEventListener('message', async e => {
-		const { type, body, requestId } = e.data;
+		const { type, body } = e.data;
 		switch (type) {
-			case 'init':
-				{
-					editor.setEditable(body.editable);
-					if (body.untitled) {
-						await editor.resetUntitled();
-						return;
-					} else {
-						// Load the initial image into the canvas.
-						await editor.reset(body.value);
-						return;
-					}
-				}
 			case 'update':
 				{
 					await editor.reset(body.content);
-					return;
-				}
-			case 'getFileData':
-				{
-					// Get the image data for the canvas and post it back to the extension.
-					editor.getImageData().then(data => {
-						vscode.postMessage({ type: 'response', requestId, body: Array.from(data) });
-					});
 					return;
 				}
 		}

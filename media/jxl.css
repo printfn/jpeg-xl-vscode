@@ -12,3 +12,7 @@ html, body {
 	background-repeat: repeat;
 	flex-direction: column;
 }
+
+.error-message {
+	text-align: center;
+}
