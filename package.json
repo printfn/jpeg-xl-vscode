@@ -6,7 +6,7 @@
   "publisher": "printfn",
   "icon": "images/icon.png",
   "engines": {
-    "vscode": "^1.93.0"
+    "vscode": "^1.92.0"
   },
   "categories": [
     "Visualization",
@@ -52,7 +52,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "22.x",
-    "@types/vscode": "^1.93.0",
+    "@types/vscode": "^1.92.0",
     "@typescript-eslint/eslint-plugin": "^8.4.0",
     "@typescript-eslint/parser": "^8.4.0",
     "@vscode/test-cli": "^0.0.10",

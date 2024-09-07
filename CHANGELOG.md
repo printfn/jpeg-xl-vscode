@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.4 (2024-09-07)
+
+- Add screenshot to README
+
 ## v1.0.3 (2024-09-07)
 
 - Scale image to always fit in viewport
