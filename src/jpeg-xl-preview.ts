@@ -78,7 +78,7 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 			});
 	}
 
-	private static readonly viewType = 'jpeg-xl.JXLPreview';
+	private static readonly viewType = 'jpeg-xl.JXLViewer';
 
 	/**
 	 * Tracks all known webviews

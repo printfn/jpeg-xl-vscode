@@ -20,16 +20,10 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "jpeg-xl.helloWorld",
-        "title": "Hello World"
-      }
-    ],
     "customEditors": [
       {
-        "viewType": "jpeg-xl.JXLPreview",
-        "displayName": "JPEG XL Preview",
+        "viewType": "jpeg-xl.JXLViewer",
+        "displayName": "JPEG XL Viewer",
         "selector": [
           {
             "filenamePattern": "*.jxl"
