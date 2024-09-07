@@ -9,6 +9,10 @@
   "categories": [
     "Other"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/printfn/jpeg-xl-vscode"
+  },
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
