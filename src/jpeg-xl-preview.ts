@@ -52,22 +52,6 @@ class JXLDocument extends Disposable implements vscode.CustomDocument {
 	public get decodedImage() { return this._decoded; }
 
 	public get documentData(): Uint8Array { return this._documentData; }
-
-	private readonly _onDidDispose = this._register(new vscode.EventEmitter<void>());
-	/**
-	 * Fired when the document is disposed of.
-	 */
-	public readonly onDidDispose = this._onDidDispose.event;
-
-	/**
-	 * Called by VS Code when there are no more references to the document.
-	 *
-	 * This happens when all editors for it have been closed.
-	 */
-	dispose(): void {
-		this._onDidDispose.fire();
-		super.dispose();
-	}
 }
 
 export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JXLDocument> {
@@ -85,10 +69,6 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 
 	private static readonly viewType = 'jpeg-xl.JXLViewer';
 
-	/**
-	 * Tracks all known webviews
-	 */
-	private readonly webviews = new WebviewCollection();
 	private readonly fileSizeStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 	private readonly resolutionStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 101);
 
@@ -112,12 +92,10 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 		webviewPanel: vscode.WebviewPanel,
 		_token: vscode.CancellationToken
 	): Promise<void> {
-		// Add the webview to our internal set of active webviews
-		this.webviews.add(document.uri, webviewPanel);
-
 		// Setup initial content for the webview
 		webviewPanel.webview.options = {
 			enableScripts: true,
+			enableForms: false,
 		};
 		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
@@ -205,28 +183,12 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 			</html>`;
 	}
 
-	private _requestId = 1;
-	private readonly _callbacks = new Map<number, (response: any) => void>();
-
-	private postMessageWithResponse<R = unknown>(panel: vscode.WebviewPanel, type: string, body: any): Promise<R> {
-		const requestId = this._requestId++;
-		const p = new Promise<R>(resolve => this._callbacks.set(requestId, resolve));
-		panel.webview.postMessage({ type, requestId, body });
-		return p;
-	}
-
 	private postMessage(panel: vscode.WebviewPanel, type: string, body: any): void {
 		panel.webview.postMessage({ type, body });
 	}
 
 	private onMessage(document: JXLDocument, message: any) {
 		switch (message.type) {
-			case 'response':
-				{
-					const callback = this._callbacks.get(message.requestId);
-					callback?.(message.body);
-					return;
-				}
 			case 'log':
 				console.log(message.body);
 				break;
@@ -234,41 +196,7 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 				break;
 			default:
 				console.error('unknown message', message);
+				break;
 		}
-	}
-}
-
-/**
- * Tracks all webviews.
- */
-class WebviewCollection {
-
-	private readonly _webviews = new Set<{
-		readonly resource: string;
-		readonly webviewPanel: vscode.WebviewPanel;
-	}>();
-
-	/**
-	 * Get all known webviews for a given uri.
-	 */
-	public *get(uri: vscode.Uri): Iterable<vscode.WebviewPanel> {
-		const key = uri.toString();
-		for (const entry of this._webviews) {
-			if (entry.resource === key) {
-				yield entry.webviewPanel;
-			}
-		}
-	}
-
-	/**
-	 * Add a new webview to the collection.
-	 */
-	public add(uri: vscode.Uri, webviewPanel: vscode.WebviewPanel) {
-		const entry = { resource: uri.toString(), webviewPanel };
-		this._webviews.add(entry);
-
-		webviewPanel.onDidDispose(() => {
-			this._webviews.delete(entry);
-		});
 	}
 }
