@@ -1,7 +1,7 @@
 {
   "name": "jpeg-xl",
   "displayName": "jpeg-xl",
-  "description": "JPEG XL previews in VS Code",
+  "description": "JPEG XL support in VS Code",
   "version": "1.0.0",
   "publisher": "printfn",
   "engines": {
