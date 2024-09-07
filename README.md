@@ -3,6 +3,8 @@
 This extension adds [JPEG XL](https://jpegxl.info/) support to VS Code. It lets
 you view `.jxl` files directly in your editor.
 
+[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=printfn.jpeg-xl)
+
 ## Features
 
 - View `.jxl` files directly in VS Code, just like built-in image formats like JPEG and PNG
