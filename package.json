@@ -3,16 +3,19 @@
   "displayName": "jpeg-xl",
   "description": "JPEG XL previews in VS Code",
   "version": "1.0.0",
+  "publisher": "printfn",
   "engines": {
     "vscode": "^1.93.0"
   },
   "categories": [
+    "Visualization",
     "Other"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/printfn/jpeg-xl-vscode"
   },
+  "homepage": "https://github.com/printfn/jpeg-xl-vscode",
   "license": "GPL-3.0-or-later",
   "activationEvents": [],
   "main": "./dist/extension.js",
