@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.3 (2024-09-07)
+
+- Scale image to always fit in viewport
+
 ## v1.0.2 (2024-09-07)
 
 - Add keywords to extension manifest
