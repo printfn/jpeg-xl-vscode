@@ -121,13 +121,14 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 		// Wait for the webview to be properly ready before we init
 		webviewPanel.webview.onDidReceiveMessage(async e => {
 			if (e.type === 'ready') {
-                this.postMessage(webviewPanel, 'update', {
-                    content: document.decodedImage,
-                });
+				this.postMessage(webviewPanel, 'update', {
+					content: document.decodedImage,
+				});
 			}
 		});
 
 		webviewPanel.onDidChangeViewState(e => this.updateStatusBarItems(e.webviewPanel.active, document));
+		webviewPanel.onDidDispose(() => this.updateStatusBarItems(false, document));
 		this.updateStatusBarItems(webviewPanel.active, document);
 	}
 
@@ -212,13 +213,13 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 					callback?.(message.body);
 					return;
 				}
-            case 'log':
-                console.log(message.body);
-                break;
-            case 'ready':
-                break;
-            default:
-                console.error('unknown message', message);
+			case 'log':
+				console.log(message.body);
+				break;
+			case 'ready':
+				break;
+			default:
+				console.error('unknown message', message);
 		}
 	}
 }

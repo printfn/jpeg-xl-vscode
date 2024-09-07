@@ -2,7 +2,7 @@
   "name": "jpeg-xl",
   "displayName": "JPEG XL",
   "description": "JPEG XL support in VS Code",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "printfn",
   "icon": "images/icon.png",
   "engines": {

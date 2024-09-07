@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.5 (2024-09-07)
+
+- Remove status bar entries when webview is disposed
+
 ## v1.0.4 (2024-09-07)
 
 - Add screenshot to README
