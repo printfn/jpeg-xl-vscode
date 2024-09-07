@@ -2,7 +2,7 @@
   "name": "jpeg-xl",
   "displayName": "JPEG XL",
   "description": "JPEG XL support in VS Code",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "printfn",
   "icon": "images/icon.png",
   "engines": {
@@ -12,6 +12,7 @@
     "Visualization",
     "Other"
   ],
+  "keywords": ["jxl", "jpeg", "jpg", "jpeg-xl", "image"],
   "repository": {
     "type": "git",
     "url": "https://github.com/printfn/jpeg-xl-vscode"
