@@ -135,7 +135,12 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 	private updateStatusBarItems(active: boolean, document: JXLDocument) {
 		if (active) {
 			this.fileSizeStatusBarItem.text = formatFileSize(document.documentData.length);
-			this.fileSizeStatusBarItem.tooltip = `${document.documentData.length.toLocaleString()} Bytes`;
+			let bpp = '';
+			if (document.decodedImage.resolutionX > 0 && document.decodedImage.resolutionY > 0) {
+				bpp = (document.documentData.length * 8 / document.decodedImage.resolutionX / document.decodedImage.resolutionY).toFixed(3);
+				bpp = ` (${bpp} bpp)`;
+			}
+			this.fileSizeStatusBarItem.tooltip = `${document.documentData.length.toLocaleString()} Bytes${bpp}`;
 			this.fileSizeStatusBarItem.show();
 			this.resolutionStatusBarItem.text = document.resolutionString;
 			this.resolutionStatusBarItem.show();
