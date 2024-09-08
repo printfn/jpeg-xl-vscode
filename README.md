@@ -10,7 +10,9 @@ you view `.jxl` files directly in your editor.
 </picture>
 
 You can download this extension from the
-[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=printfn.jpeg-xl).
+[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=printfn.jpeg-xl)
+or you can manually download the latest release from
+[GitHub](https://github.com/printfn/jpeg-xl-vscode/releases/latest).
 
 ## Features
 
