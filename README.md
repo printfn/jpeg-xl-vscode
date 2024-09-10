@@ -9,10 +9,10 @@ you view `.jxl` files directly in your editor.
     <img src="./images/screenshot.png" alt="Screenshot of VS Code with a JPEG XL image">
 </picture>
 
-You can download this extension from the
-[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=printfn.jpeg-xl)
-or you can manually download the latest release from
-[GitHub](https://github.com/printfn/jpeg-xl-vscode/releases/latest).
+You can download this extension from:
+* [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=printfn.jpeg-xl)
+* [OpenVSX (VSCodium)](https://open-vsx.org/extension/printfn/jpeg-xl)
+* [GitHub](https://github.com/printfn/jpeg-xl-vscode/releases/latest)
 
 ## Features
 
