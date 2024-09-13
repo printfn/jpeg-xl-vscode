@@ -1,4 +1,6 @@
+// @ts-expect-error
 import init, { JxlImage } from 'jxl-oxide-wasm';
+// @ts-expect-error
 import module from 'jxl-oxide-wasm/module.wasm';
 
 export type DecodedImage = {

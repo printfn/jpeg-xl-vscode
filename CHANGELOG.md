@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.7 (2024-09-14)
+
+- Update `jxl-oxide-wasm` to v0.9.0
+
 ## v1.0.6 (2024-09-07)
 
 - Show bits per pixel in status bar tooltip
