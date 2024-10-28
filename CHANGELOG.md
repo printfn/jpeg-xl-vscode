@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.8 (2024-10-28)
+
+- Update `jxl-oxide-wasm` to v0.9.1
+- Update all dev dependencies to latest versions
+- Format the codebase
+
 ## v1.0.7 (2024-09-14)
 
 - Update `jxl-oxide-wasm` to v0.9.0
