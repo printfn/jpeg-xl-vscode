@@ -12,7 +12,8 @@ class JXLDocument extends Disposable implements vscode.CustomDocument {
 		backupId: string | undefined,
 	): Promise<JXLDocument | PromiseLike<JXLDocument>> {
 		// If we have a backup, read that. Otherwise read the resource from the workspace
-		const dataFile = typeof backupId === 'string' ? vscode.Uri.parse(backupId) : uri;
+		const dataFile =
+			typeof backupId === 'string' ? vscode.Uri.parse(backupId) : uri;
 		const fileData = await JXLDocument.readFile(dataFile);
 		const decoded = await decode(fileData);
 		return new JXLDocument(uri, fileData, decoded);
@@ -39,7 +40,7 @@ class JXLDocument extends Disposable implements vscode.CustomDocument {
 	private constructor(
 		uri: vscode.Uri,
 		initialContent: Uint8Array,
-		decoded: DecodedImage
+		decoded: DecodedImage,
 	) {
 		super();
 		this._uri = uri;
@@ -47,14 +48,22 @@ class JXLDocument extends Disposable implements vscode.CustomDocument {
 		this._documentData = initialContent;
 	}
 
-	public get uri() { return this._uri; }
+	public get uri() {
+		return this._uri;
+	}
 
-	public get decodedImage() { return this._decoded; }
+	public get decodedImage() {
+		return this._decoded;
+	}
 
-	public get documentData(): Uint8Array { return this._documentData; }
+	public get documentData(): Uint8Array {
+		return this._documentData;
+	}
 }
 
-export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JXLDocument> {
+export class JXLEditorProvider
+	implements vscode.CustomReadonlyEditorProvider<JXLDocument>
+{
 	public static register(context: vscode.ExtensionContext): vscode.Disposable {
 		return vscode.window.registerCustomEditorProvider(
 			JXLEditorProvider.viewType,
@@ -64,33 +73,44 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 					retainContextWhenHidden: false,
 				},
 				supportsMultipleEditorsPerDocument: true,
-			});
+			},
+		);
 	}
 
 	private static readonly viewType = 'jpeg-xl.JXLViewer';
 
-	private readonly fileSizeStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-	private readonly resolutionStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 101);
+	private readonly fileSizeStatusBarItem = vscode.window.createStatusBarItem(
+		vscode.StatusBarAlignment.Right,
+		100,
+	);
+	private readonly resolutionStatusBarItem = vscode.window.createStatusBarItem(
+		vscode.StatusBarAlignment.Right,
+		101,
+	);
 
-	constructor(
-		private readonly context: vscode.ExtensionContext
-	) {
-		context.subscriptions.push(this.fileSizeStatusBarItem, this.resolutionStatusBarItem);
+	constructor(private readonly context: vscode.ExtensionContext) {
+		context.subscriptions.push(
+			this.fileSizeStatusBarItem,
+			this.resolutionStatusBarItem,
+		);
 	}
 
 	async openCustomDocument(
 		uri: vscode.Uri,
 		openContext: { backupId?: string },
-		_token: vscode.CancellationToken
+		_token: vscode.CancellationToken,
 	): Promise<JXLDocument> {
-		const document: JXLDocument = await JXLDocument.create(uri, openContext.backupId);
+		const document: JXLDocument = await JXLDocument.create(
+			uri,
+			openContext.backupId,
+		);
 		return document;
 	}
 
 	async resolveCustomEditor(
 		document: JXLDocument,
 		webviewPanel: vscode.WebviewPanel,
-		_token: vscode.CancellationToken
+		_token: vscode.CancellationToken,
 	): Promise<void> {
 		// Setup initial content for the webview
 		webviewPanel.webview.options = {
@@ -110,17 +130,28 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 			}
 		});
 
-		webviewPanel.onDidChangeViewState(e => this.updateStatusBarItems(e.webviewPanel.active, document));
+		webviewPanel.onDidChangeViewState(e =>
+			this.updateStatusBarItems(e.webviewPanel.active, document),
+		);
 		webviewPanel.onDidDispose(() => this.updateStatusBarItems(false, document));
 		this.updateStatusBarItems(webviewPanel.active, document);
 	}
 
 	private updateStatusBarItems(active: boolean, document: JXLDocument) {
 		if (active) {
-			this.fileSizeStatusBarItem.text = formatFileSize(document.documentData.length);
+			this.fileSizeStatusBarItem.text = formatFileSize(
+				document.documentData.length,
+			);
 			let bpp = '';
-			if (document.decodedImage.resolutionX > 0 && document.decodedImage.resolutionY > 0) {
-				bpp = (document.documentData.length * 8 / document.decodedImage.resolutionX / document.decodedImage.resolutionY).toFixed(3);
+			if (
+				document.decodedImage.resolutionX > 0 &&
+				document.decodedImage.resolutionY > 0
+			) {
+				bpp = (
+					(document.documentData.length * 8) /
+					document.decodedImage.resolutionX /
+					document.decodedImage.resolutionY
+				).toFixed(3);
 				bpp = ` (${bpp} bpp)`;
 			}
 			this.fileSizeStatusBarItem.tooltip = `${document.documentData.length.toLocaleString()} Bytes${bpp}`;
@@ -137,30 +168,37 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 		}
 	}
 
-	private readonly _onDidChangeCustomDocument = new vscode.EventEmitter<vscode.CustomDocumentEditEvent<JXLDocument>>();
-	public readonly onDidChangeCustomDocument = this._onDidChangeCustomDocument.event;
+	private readonly _onDidChangeCustomDocument = new vscode.EventEmitter<
+		vscode.CustomDocumentEditEvent<JXLDocument>
+	>();
+	public readonly onDidChangeCustomDocument =
+		this._onDidChangeCustomDocument.event;
 
 	/**
 	 * Get the static HTML used for in our editor's webviews.
 	 */
 	private getHtmlForWebview(webview: vscode.Webview): string {
 		// Local path to script and css for the webview
-		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this.context.extensionUri, 'media', 'jxl.js'));
+		const scriptUri = webview.asWebviewUri(
+			vscode.Uri.joinPath(this.context.extensionUri, 'media', 'jxl.js'),
+		);
 
-		const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this.context.extensionUri, 'media', 'reset.css'));
+		const styleResetUri = webview.asWebviewUri(
+			vscode.Uri.joinPath(this.context.extensionUri, 'media', 'reset.css'),
+		);
 
-		const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this.context.extensionUri, 'media', 'vscode.css'));
+		const styleVSCodeUri = webview.asWebviewUri(
+			vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vscode.css'),
+		);
 
-		const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(
-			this.context.extensionUri, 'media', 'jxl.css'));
+		const styleMainUri = webview.asWebviewUri(
+			vscode.Uri.joinPath(this.context.extensionUri, 'media', 'jxl.css'),
+		);
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
 
-		return /* html */`
+		return /* html */ `
 			<!doctype html>
 			<html lang="en">
 			<head>
@@ -183,7 +221,11 @@ export class JXLEditorProvider implements vscode.CustomReadonlyEditorProvider<JX
 			</html>`;
 	}
 
-	private postMessage(panel: vscode.WebviewPanel, type: string, body: any): void {
+	private postMessage(
+		panel: vscode.WebviewPanel,
+		type: string,
+		body: any,
+	): void {
 		panel.webview.postMessage({ type, body });
 	}
 

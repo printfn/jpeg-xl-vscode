@@ -14,7 +14,7 @@
 	 * @return {Promise<HTMLImageElement>}
 	 */
 	async function loadImageFromData(initialContent) {
-		const blob = new Blob([initialContent], { 'type': 'image/png' });
+		const blob = new Blob([initialContent], { type: 'image/png' });
 		const url = URL.createObjectURL(blob);
 		try {
 			const img = document.createElement('img');
@@ -31,7 +31,7 @@
 	}
 
 	class JXLEditor {
-		constructor( /** @type {HTMLElement} */ parent) {
+		constructor(/** @type {HTMLElement} */ parent) {
 			this._initElements(parent);
 		}
 
@@ -93,14 +93,13 @@
 	window.addEventListener('message', async e => {
 		const { type, body } = e.data;
 		switch (type) {
-			case 'update':
-				{
-					await editor.reset(body.content);
-					return;
-				}
+			case 'update': {
+				await editor.reset(body.content);
+				return;
+			}
 		}
 	});
 
 	// Signal to VS Code that the webview is initialized.
 	vscode.postMessage({ type: 'ready' });
-}());
+})();

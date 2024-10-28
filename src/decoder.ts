@@ -31,8 +31,10 @@ export async function decode(data: Uint8Array): Promise<DecodedImage> {
 		}
 		const renderResult = image.render();
 		const png = renderResult.encodeToPng();
-		const resolutionX = png[16] << 24 | png[17] << 16 | png[18] << 8 | png[19];
-		const resolutionY = png[20] << 24 | png[21] << 16 | png[22] << 8 | png[23];
+		const resolutionX =
+			(png[16] << 24) | (png[17] << 16) | (png[18] << 8) | png[19];
+		const resolutionY =
+			(png[20] << 24) | (png[21] << 16) | (png[22] << 8) | png[23];
 		return { png, resolutionX, resolutionY };
 	} catch (e) {
 		return {
