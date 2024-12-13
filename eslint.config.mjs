@@ -1,7 +1,13 @@
+// @ts-check
+
+import tseslint from 'typescript-eslint';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
-export default [
+export default tseslint.config(
+	{
+		ignores: ['dist'],
+	},
 	{
 		files: ['**/*.ts'],
 	},
@@ -31,4 +37,4 @@ export default [
 			semi: 'warn',
 		},
 	},
-];
+);
