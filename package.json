@@ -2,11 +2,11 @@
 	"name": "jpeg-xl",
 	"displayName": "JPEG XL",
 	"description": "JPEG XL support in VS Code",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"publisher": "printfn",
 	"icon": "images/icon.png",
 	"engines": {
-		"vscode": "^1.92.0"
+		"vscode": "^1.96.0"
 	},
 	"categories": [
 		"Visualization",
@@ -58,7 +58,7 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^10.0.10",
-		"@types/node": "22.x",
+		"@types/node": "^22.10.2",
 		"@types/vscode": "^1.96.0",
 		"@typescript-eslint/eslint-plugin": "^8.18.0",
 		"@typescript-eslint/parser": "^8.18.0",

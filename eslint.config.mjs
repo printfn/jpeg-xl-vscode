@@ -1,25 +1,31 @@
 // @ts-check
 
+import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
 export default tseslint.config(
+	eslint.configs.recommended,
+	...tseslint.configs.strictTypeChecked,
 	{
-		ignores: ['dist'],
+		ignores: [
+			'dist',
+			'.vscode-test.mjs',
+			'esbuild.mjs',
+			'eslint.config.mjs',
+			'media',
+		],
 	},
 	{
-		files: ['**/*.ts'],
+		files: ['./src/**/*.{js,mjs,ts}'],
 	},
 	{
-		plugins: {
-			'@typescript-eslint': typescriptEslint,
-		},
-
 		languageOptions: {
 			parser: tsParser,
-			ecmaVersion: 2022,
-			sourceType: 'module',
+			parserOptions: {
+				projectService: true,
+				tsconfigRootDir: import.meta.dirname,
+			},
 		},
 
 		rules: {
@@ -30,11 +36,13 @@ export default tseslint.config(
 					format: ['camelCase', 'PascalCase'],
 				},
 			],
-
-			curly: 'warn',
-			eqeqeq: 'warn',
-			'no-throw-literal': 'warn',
-			semi: 'warn',
+			'@typescript-eslint/promise-function-async': 'error',
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					argsIgnorePattern: '^_',
+				},
+			],
 		},
 	},
 );

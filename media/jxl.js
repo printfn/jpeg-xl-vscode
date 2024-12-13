@@ -2,7 +2,7 @@
 
 // This script is run within the webview itself
 (function () {
-	// @ts-ignore
+	// @ts-expect-error
 	const vscode = acquireVsCodeApi();
 
 	function log(/** @type string */ message) {

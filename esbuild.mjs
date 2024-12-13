@@ -14,12 +14,14 @@ const esbuildProblemMatcherPlugin = {
 			console.log('[watch] build started');
 		});
 		build.onEnd(result => {
-			result.errors.forEach(({ text, location }) => {
+			for (const { text, location } of result.errors) {
 				console.error(`✘ [ERROR] ${text}`);
-				console.error(
-					`    ${location.file}:${location.line}:${location.column}:`,
-				);
-			});
+				if (location) {
+					console.error(
+						`    ${location.file}:${location.line}:${location.column}:`,
+					);
+				}
+			}
 			console.log('[watch] build finished');
 		});
 	},
@@ -40,12 +42,7 @@ async function main() {
 		loader: {
 			'.wasm': 'binary',
 		},
-		plugins: [
-			// wasmPlugin,
-			// wasmLoader({ mode: 'embedded' }),
-			/* add to the end of plugins array */
-			esbuildProblemMatcherPlugin,
-		],
+		plugins: [esbuildProblemMatcherPlugin],
 	});
 	if (watch) {
 		await ctx.watch();

@@ -1,7 +1,14 @@
 import * as vscode from 'vscode';
-import { Disposable, disposeAll } from './dispose.js';
+import { Disposable } from './dispose.js';
 import { formatFileSize, getNonce } from './util.js';
 import { decode, type DecodedImage } from './decoder.js';
+
+type Message =
+	| {
+			type: 'ready';
+	  }
+	| { type: 'log'; body: string }
+	| { type: 'update'; body: { content: DecodedImage } };
 
 /**
  * Define the document (the data model) used for JPEG XL files.
@@ -34,7 +41,9 @@ class JXLDocument extends Disposable implements vscode.CustomDocument {
 		if (!this._decoded.png) {
 			return '';
 		}
-		return `${this._decoded.resolutionX}x${this._decoded.resolutionY}`;
+		const x = this._decoded.resolutionX.toString();
+		const y = this._decoded.resolutionY.toString();
+		return `${x}x${y}`;
 	}
 
 	private constructor(
@@ -107,11 +116,11 @@ export class JXLEditorProvider
 		return document;
 	}
 
-	async resolveCustomEditor(
+	resolveCustomEditor(
 		document: JXLDocument,
 		webviewPanel: vscode.WebviewPanel,
 		_token: vscode.CancellationToken,
-	): Promise<void> {
+	) {
 		// Setup initial content for the webview
 		webviewPanel.webview.options = {
 			enableScripts: true,
@@ -119,21 +128,28 @@ export class JXLEditorProvider
 		};
 		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
-		webviewPanel.webview.onDidReceiveMessage(e => this.onMessage(document, e));
+		webviewPanel.webview.onDidReceiveMessage((e: Message) => {
+			this.onMessage(document, e);
+		});
 
 		// Wait for the webview to be properly ready before we init
-		webviewPanel.webview.onDidReceiveMessage(async e => {
+		webviewPanel.webview.onDidReceiveMessage((e: Message) => {
 			if (e.type === 'ready') {
-				this.postMessage(webviewPanel, 'update', {
-					content: document.decodedImage,
+				this.postMessage(webviewPanel, {
+					type: 'update',
+					body: {
+						content: document.decodedImage,
+					},
 				});
 			}
 		});
 
-		webviewPanel.onDidChangeViewState(e =>
-			this.updateStatusBarItems(e.webviewPanel.active, document),
-		);
-		webviewPanel.onDidDispose(() => this.updateStatusBarItems(false, document));
+		webviewPanel.onDidChangeViewState(e => {
+			this.updateStatusBarItems(e.webviewPanel.active, document);
+		});
+		webviewPanel.onDidDispose(() => {
+			this.updateStatusBarItems(false, document);
+		});
 		this.updateStatusBarItems(webviewPanel.active, document);
 	}
 
@@ -179,21 +195,29 @@ export class JXLEditorProvider
 	 */
 	private getHtmlForWebview(webview: vscode.Webview): string {
 		// Local path to script and css for the webview
-		const scriptUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this.context.extensionUri, 'media', 'jxl.js'),
-		);
+		const scriptUri = webview
+			.asWebviewUri(
+				vscode.Uri.joinPath(this.context.extensionUri, 'media', 'jxl.js'),
+			)
+			.toString();
 
-		const styleResetUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this.context.extensionUri, 'media', 'reset.css'),
-		);
+		const styleResetUri = webview
+			.asWebviewUri(
+				vscode.Uri.joinPath(this.context.extensionUri, 'media', 'reset.css'),
+			)
+			.toString();
 
-		const styleVSCodeUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vscode.css'),
-		);
+		const styleVSCodeUri = webview
+			.asWebviewUri(
+				vscode.Uri.joinPath(this.context.extensionUri, 'media', 'vscode.css'),
+			)
+			.toString();
 
-		const styleMainUri = webview.asWebviewUri(
-			vscode.Uri.joinPath(this.context.extensionUri, 'media', 'jxl.css'),
-		);
+		const styleMainUri = webview
+			.asWebviewUri(
+				vscode.Uri.joinPath(this.context.extensionUri, 'media', 'jxl.css'),
+			)
+			.toString();
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
@@ -221,15 +245,11 @@ export class JXLEditorProvider
 			</html>`;
 	}
 
-	private postMessage(
-		panel: vscode.WebviewPanel,
-		type: string,
-		body: any,
-	): void {
-		panel.webview.postMessage({ type, body });
+	private postMessage(panel: vscode.WebviewPanel, message: Message): void {
+		panel.webview.postMessage(message);
 	}
 
-	private onMessage(document: JXLDocument, message: any) {
+	private onMessage(document: JXLDocument, message: Message) {
 		switch (message.type) {
 			case 'log':
 				console.log(message.body);
