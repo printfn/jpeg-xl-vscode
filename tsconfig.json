@@ -5,11 +5,10 @@
 		"lib": ["ES2022"],
 		"moduleResolution": "bundler",
 		"sourceMap": true,
-		"rootDir": "src",
 		"skipLibCheck": true,
 		"noEmit": true,
 		"strict": true,
 		"checkJs": true
 	},
-	"include": ["src"]
+	"include": ["src", "esbuild.mts"]
 }

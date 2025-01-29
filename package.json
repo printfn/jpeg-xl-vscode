@@ -2,7 +2,7 @@
 	"name": "jpeg-xl",
 	"displayName": "JPEG XL",
 	"description": "JPEG XL support in VS Code",
-	"version": "1.0.10",
+	"version": "1.0.11",
 	"publisher": "printfn",
 	"icon": "images/icon.png",
 	"engines": {
@@ -43,11 +43,11 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",
-		"compile": "npm run check-types && npm run lint && node esbuild.mjs",
+		"compile": "npm run check-types && npm run lint && node esbuild.mts",
 		"watch": "npm-run-all -p watch:*",
-		"watch:esbuild": "node esbuild.mjs --watch",
+		"watch:esbuild": "node esbuild.mts --watch",
 		"watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-		"package": "npm run check-types && npm run lint && node esbuild.mjs --production",
+		"package": "npm run check-types && npm run lint && node esbuild.mts --production",
 		"compile-tests": "tsc -p . --outDir out",
 		"watch-tests": "tsc -p . -w --outDir out",
 		"pretest": "npm run compile-tests && npm run compile && npm run lint",
@@ -58,21 +58,21 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^10.0.10",
-		"@types/node": "^22.10.2",
+		"@types/node": "^22.12.0",
 		"@types/vscode": "^1.96.0",
-		"@typescript-eslint/eslint-plugin": "^8.18.0",
-		"@typescript-eslint/parser": "^8.18.0",
+		"@typescript-eslint/eslint-plugin": "^8.22.0",
+		"@typescript-eslint/parser": "^8.22.0",
 		"@vscode/test-cli": "^0.0.10",
 		"@vscode/test-electron": "^2.4.1",
-		"esbuild": "^0.24.0",
-		"eslint": "^9.16.0",
+		"esbuild": "^0.24.2",
+		"eslint": "^9.19.0",
 		"npm-run-all": "^4.1.5",
 		"prettier": "^3.4.2",
-		"typescript": "^5.7.2",
-		"typescript-eslint": "^8.18.0"
+		"typescript": "^5.7.3",
+		"typescript-eslint": "^8.22.0"
 	},
 	"dependencies": {
-		"jxl-oxide-wasm": "^0.10.2"
+		"jxl-oxide-wasm": "^0.11.1"
 	},
 	"prettier": {
 		"useTabs": true,

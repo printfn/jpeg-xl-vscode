@@ -1,12 +1,9 @@
-import { context } from 'esbuild';
+import { context, type Plugin } from 'esbuild';
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
 
-/**
- * @type {import('esbuild').Plugin}
- */
-const esbuildProblemMatcherPlugin = {
+const esbuildProblemMatcherPlugin: Plugin = {
 	name: 'esbuild-problem-matcher',
 
 	setup(build) {
@@ -17,8 +14,10 @@ const esbuildProblemMatcherPlugin = {
 			for (const { text, location } of result.errors) {
 				console.error(`✘ [ERROR] ${text}`);
 				if (location) {
+					const line = location.line.toString();
+					const column = location.column.toString();
 					console.error(
-						`    ${location.file}:${location.line}:${location.column}:`,
+						`    ${location.file}:${line}:${column}:`,
 					);
 				}
 			}
