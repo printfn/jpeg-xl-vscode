@@ -16,9 +16,7 @@ const esbuildProblemMatcherPlugin: Plugin = {
 				if (location) {
 					const line = location.line.toString();
 					const column = location.column.toString();
-					console.error(
-						`    ${location.file}:${line}:${column}:`,
-					);
+					console.error(`    ${location.file}:${line}:${column}:`);
 				}
 			}
 			console.log('[watch] build finished');
@@ -38,6 +36,9 @@ async function main() {
 		outfile: 'dist/extension.js',
 		external: ['vscode'],
 		logLevel: 'silent',
+		alias: {
+			'jxl-oxide-wasm.wasm': 'jxl-oxide-wasm/module.wasm',
+		},
 		loader: {
 			'.wasm': 'binary',
 		},

@@ -1,9 +1,5 @@
 import init, { JxlImage } from 'jxl-oxide-wasm';
-
-// @ts-expect-error wasm files are imported as Uint8Arrays
-import module from 'jxl-oxide-wasm/module.wasm';
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const wasmInput: Uint8Array = module;
+import wasmInput from 'jxl-oxide-wasm.wasm';
 
 export type DecodedImage = {
 	png?: Uint8Array;
@@ -40,8 +36,7 @@ export async function decode(data: Uint8Array): Promise<DecodedImage> {
 		return { png, resolutionX, resolutionY };
 	} catch (e) {
 		return {
-			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-			error: e instanceof Error ? e.message : `${e}`,
+			error: e instanceof Error ? e.message : Object.prototype.toString.call(e),
 			resolutionX: 0,
 			resolutionY: 0,
 		};
