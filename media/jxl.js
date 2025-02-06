@@ -53,16 +53,16 @@
 		}
 
 		/**
-		 * @param {import('../src/decoder').DecodedImage} image
+		 * @param {import('../src/decoder').DecoderResult} message
 		 */
-		async reset(image) {
+		async reset(message) {
 			if (!this.canvas || !this.ctx || !this.errorText) {
 				return;
 			}
-			if (image.png) {
+			if (message.ok) {
 				this.canvas.style.display = 'unset';
 				this.errorText.style.display = 'none';
-				const img = await loadImageFromData(image.png);
+				const img = await loadImageFromData(message.image.png);
 				this.canvas.width = img.naturalWidth;
 				this.canvas.height = img.naturalHeight;
 				this.ctx.drawImage(img, 0, 0);
@@ -77,7 +77,7 @@
 			} else {
 				this.canvas.style.display = 'none';
 				this.errorText.style.display = 'unset';
-				this.errorText.innerHTML = `JPEG XL: ${image.error ?? 'Unknown error'}`;
+				this.errorText.innerHTML = `JPEG XL: ${message.error ?? 'Unknown error'}`;
 			}
 		}
 	}
@@ -94,7 +94,9 @@
 		const { type, body } = e.data;
 		switch (type) {
 			case 'update': {
-				await editor.reset(body.content);
+				/** @type import('../src/decoder').DecoderResult */
+				const message = body.content;
+				await editor.reset(message);
 				return;
 			}
 		}

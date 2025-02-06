@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import { Disposable } from './dispose.js';
 import { formatFileSize, getNonce } from './util.js';
-import { decode, type DecodedImage } from './decoder.js';
+import { decode, type DecoderResult } from './decoder.js';
 
 type Message =
 	| {
 			type: 'ready';
 	  }
 	| { type: 'log'; body: string }
-	| { type: 'update'; body: { content: DecodedImage } };
+	| { type: 'update'; body: { content: DecoderResult } };
 
 /**
  * Define the document (the data model) used for JPEG XL files.
@@ -35,21 +35,30 @@ class JXLDocument extends Disposable implements vscode.CustomDocument {
 
 	private _documentData: Uint8Array;
 
-	private readonly _decoded: DecodedImage;
+	private readonly _decoded: DecoderResult;
 
 	public get resolutionString() {
-		if (!this._decoded.png) {
+		if (!this._decoded.ok) {
 			return '';
 		}
-		const x = this._decoded.resolutionX.toString();
-		const y = this._decoded.resolutionY.toString();
-		return `${x}x${y}`;
+		const x = this._decoded.image.resolutionX.toString();
+		const y = this._decoded.image.resolutionY.toString();
+		return `${x}\u00d7${y}`;
+	}
+
+	public get resolutionTooltip() {
+		if (!this._decoded.ok) {
+			return '';
+		}
+		const resolution =
+			this._decoded.image.resolutionX * this._decoded.image.resolutionY;
+		return `${resolution.toLocaleString()} pixels`;
 	}
 
 	private constructor(
 		uri: vscode.Uri,
 		initialContent: Uint8Array,
-		decoded: DecodedImage,
+		decoded: DecoderResult,
 	) {
 		super();
 		this._uri = uri;
@@ -61,7 +70,7 @@ class JXLDocument extends Disposable implements vscode.CustomDocument {
 		return this._uri;
 	}
 
-	public get decodedImage() {
+	public get decoded() {
 		return this._decoded;
 	}
 
@@ -138,7 +147,7 @@ export class JXLEditorProvider
 				this.postMessage(webviewPanel, {
 					type: 'update',
 					body: {
-						content: document.decodedImage,
+						content: document.decoded,
 					},
 				});
 			}
@@ -154,32 +163,34 @@ export class JXLEditorProvider
 	}
 
 	private updateStatusBarItems(active: boolean, document: JXLDocument) {
-		if (active) {
-			this.fileSizeStatusBarItem.text = formatFileSize(
-				document.documentData.length,
-			);
-			let bpp = '';
-			if (
-				document.decodedImage.resolutionX > 0 &&
-				document.decodedImage.resolutionY > 0
-			) {
-				bpp = (
-					(document.documentData.length * 8) /
-					document.decodedImage.resolutionX /
-					document.decodedImage.resolutionY
-				).toFixed(3);
-				bpp = ` (${bpp} bpp)`;
-			}
-			this.fileSizeStatusBarItem.tooltip = `${document.documentData.length.toLocaleString()} Bytes${bpp}\njxl-oxide ${document.decodedImage.jxlOxideVersion ?? 'unknown'}`;
-			this.fileSizeStatusBarItem.show();
-			if (document.resolutionString) {
-				this.resolutionStatusBarItem.text = document.resolutionString;
-				this.resolutionStatusBarItem.show();
-			} else {
-				this.resolutionStatusBarItem.hide();
-			}
-		} else {
+		if (!active) {
 			this.fileSizeStatusBarItem.hide();
+			this.resolutionStatusBarItem.hide();
+			return;
+		}
+		this.fileSizeStatusBarItem.text = formatFileSize(
+			document.documentData.length,
+		);
+		let bpp = '';
+		if (document.decoded.ok) {
+			bpp = (
+				(document.decoded.image.fileSize * 8) /
+				document.decoded.image.resolutionX /
+				document.decoded.image.resolutionY
+			).toFixed(3);
+			bpp = ` (${bpp} bpp)`;
+		}
+		const version =
+			(document.decoded.ok
+				? document.decoded.image.jxlOxideVersion
+				: document.decoded.jxlOxideVersion) ?? '<unknown version>';
+		this.fileSizeStatusBarItem.tooltip = `${document.documentData.length.toLocaleString()} Bytes${bpp}\njxl-oxide ${version}`;
+		this.fileSizeStatusBarItem.show();
+		if (document.decoded.ok) {
+			this.resolutionStatusBarItem.text = document.resolutionString;
+			this.resolutionStatusBarItem.tooltip = document.resolutionTooltip;
+			this.resolutionStatusBarItem.show();
+		} else {
 			this.resolutionStatusBarItem.hide();
 		}
 	}
