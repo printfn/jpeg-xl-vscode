@@ -170,7 +170,7 @@ export class JXLEditorProvider
 				).toFixed(3);
 				bpp = ` (${bpp} bpp)`;
 			}
-			this.fileSizeStatusBarItem.tooltip = `${document.documentData.length.toLocaleString()} Bytes${bpp}`;
+			this.fileSizeStatusBarItem.tooltip = `${document.documentData.length.toLocaleString()} Bytes${bpp}\njxl-oxide ${document.decodedImage.jxlOxideVersion ?? 'unknown'}`;
 			this.fileSizeStatusBarItem.show();
 			if (document.resolutionString) {
 				this.resolutionStatusBarItem.text = document.resolutionString;

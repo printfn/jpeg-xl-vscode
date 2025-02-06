@@ -1,4 +1,4 @@
-import init, { JxlImage } from 'jxl-oxide-wasm';
+import init, { JxlImage, version } from 'jxl-oxide-wasm';
 import wasmInput from 'jxl-oxide-wasm.wasm';
 
 export type DecodedImage = {
@@ -6,6 +6,7 @@ export type DecodedImage = {
 	error?: string;
 	resolutionX: number;
 	resolutionY: number;
+	jxlOxideVersion?: string;
 };
 
 export async function decode(data: Uint8Array): Promise<DecodedImage> {
@@ -33,7 +34,7 @@ export async function decode(data: Uint8Array): Promise<DecodedImage> {
 			(png[16] << 24) | (png[17] << 16) | (png[18] << 8) | png[19];
 		const resolutionY =
 			(png[20] << 24) | (png[21] << 16) | (png[22] << 8) | png[23];
-		return { png, resolutionX, resolutionY };
+		return { png, resolutionX, resolutionY, jxlOxideVersion: version() };
 	} catch (e) {
 		return {
 			error: e instanceof Error ? e.message : Object.prototype.toString.call(e),
