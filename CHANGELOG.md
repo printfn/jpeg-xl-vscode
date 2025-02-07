@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.12 (2025-02-08)
+
+- Improve tooltips
+- Show total pixel count
+- Show `jxl-oxide-wasm` version number
+
 ## v1.0.11 (2025-01-29)
 
 - Update `jxl-oxide-wasm` to v0.11.1
