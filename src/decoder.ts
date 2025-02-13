@@ -1,5 +1,6 @@
 import init, { JxlImage, version } from 'jxl-oxide-wasm';
 import wasmInput from 'jxl-oxide-wasm.wasm';
+import { errorToString } from './util';
 
 export type DecoderResult =
 	| { ok: true; image: DecodedImage }
@@ -58,7 +59,7 @@ export async function decode(data: Uint8Array): Promise<DecoderResult> {
 	} catch (e) {
 		return {
 			ok: false,
-			error: e instanceof Error ? e.message : Object.prototype.toString.call(e),
+			error: errorToString(e),
 		};
 	}
 }

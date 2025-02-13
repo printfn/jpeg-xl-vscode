@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.13 (2025-02-13)
+
+- Fix error messages when an image cannot be decoded
+
 ## v1.0.12 (2025-02-08)
 
 - Improve tooltips

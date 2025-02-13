@@ -16,3 +16,21 @@ export function formatFileSize(bytes: number) {
 
 	return `${size.toFixed(2)} ${sizes[i]}`;
 }
+
+export function errorToString(value: unknown) {
+	if (value instanceof Error) {
+		return value.message;
+	}
+	if (value == null || typeof value !== 'object') {
+		return String(value);
+	}
+	try {
+		if ('toString' in value) {
+			// eslint-disable-next-line @typescript-eslint/no-base-to-string
+			return value.toString();
+		}
+		return String(value);
+	} catch {
+		return Object.prototype.toString.call(value);
+	}
+}

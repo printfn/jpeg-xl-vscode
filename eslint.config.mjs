@@ -14,6 +14,7 @@ export default tseslint.config(
 			'esbuild.mjs',
 			'eslint.config.mjs',
 			'media',
+			'.vscode-test',
 		],
 	},
 	{
