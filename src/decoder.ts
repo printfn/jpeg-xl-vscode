@@ -35,10 +35,15 @@ export async function decode(data: Uint8Array): Promise<DecoderResult> {
 		}
 		const renderResult = image.render();
 		const png = renderResult.encodeToPng();
-		const resolutionX =
-			(png[16] << 24) | (png[17] << 16) | (png[18] << 8) | png[19];
-		const resolutionY =
-			(png[20] << 24) | (png[21] << 16) | (png[22] << 8) | png[23];
+		const resolutionX = image.width;
+		const resolutionY = image.height;
+		if (resolutionX === undefined || resolutionY === undefined) {
+			return {
+				ok: false,
+				error: `couldn't determine image resolution`,
+				jxlOxideVersion: version(),
+			};
+		}
 		if (resolutionX === 0 || resolutionY === 0) {
 			return {
 				ok: false,
