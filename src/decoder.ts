@@ -16,7 +16,7 @@ export type DecodedImage = {
 
 export async function decode(data: Uint8Array): Promise<DecoderResult> {
 	try {
-		await init(wasmInput);
+		await init({ module_or_path: wasmInput });
 		if (data.length === 0) {
 			return {
 				ok: false,
