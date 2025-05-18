@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.14 (2025-05-18)
+
+- Update `jxl-oxide-wasm` to v0.12.2
+
 ## v1.0.13 (2025-02-13)
 
 - Fix error messages when an image cannot be decoded
