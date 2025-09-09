@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.15 (2025-09-09)
+
+- Add image icon for JXL files
+- Update `jxl-oxide-wasm` to v0.12.4
+
 ## v1.0.14 (2025-05-18)
 
 - Update `jxl-oxide-wasm` to v0.12.2
